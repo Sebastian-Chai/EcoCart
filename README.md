@@ -4,7 +4,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/keiloktql/LifeHack2023-EcoCart">
+  <a href="https://github.com/Sebastian-Chai/EcoCart/">
     <img src="web-app/public/android-chrome-512x512.png" alt="Logo" width="120" height="120">
   </a>
 
@@ -14,9 +14,9 @@
     Sustainable Shopping Companion Powered by AI
     <br />
     <br />
-    <a href="https://github.com/keiloktql/LifeHack2023-EcoCart/issues">Report Bugs</a>
+    <a href="https://github.com/Sebastian-Chai/EcoCart//issues">Report Bugs</a>
     ·
-    <a href="https://github.com/keiloktql/LifeHack2023-EcoCart/issues">Request Features</a>
+    <a href="https://github.com/Sebastian-Chai/EcoCart//issues">Request Features</a>
   </p>
 </div>
 
@@ -40,7 +40,7 @@
 
 <a href="#about-the-project"></a>
 
-![](https://github.com/keiloktql/LifeHack2023-EcoCart/blob/main/promotion/poster-1.png)
+![](https://github.com/Sebastian-Chai/EcoCart//blob/main/promotion/poster-1.png)
 
 EcoCart is an AI-powered Sustainable Shopping Companion that helps users reduce their carbon footprint. It consists of a user-friendly dashboard web app and a browser extension for seamless transaction tracking.
 
@@ -137,7 +137,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 - Tan Yu Hoe (AI Engineer/Backend Engineer) - [LinkedIn](https://www.linkedin.com/in/yu-hoe-tan/)
 
-Project Link: [https://github.com/keiloktql/LifeHack2023-EcoCart](https://github.com/keiloktql/LifeHack2023-EcoCart)
+Project Link: [https://github.com/Sebastian-Chai/EcoCart/](https://github.com/Sebastian-Chai/EcoCart/)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -151,6 +151,6 @@ Project Link: [https://github.com/keiloktql/LifeHack2023-EcoCart](https://github
 
 ## More Images
 
-![](https://github.com/keiloktql/LifeHack2023-EcoCart/blob/main/promotion/poster-2.png)
+![](https://github.com/Sebastian-Chai/EcoCart//blob/main/promotion/poster-2.png)
 
-![](https://github.com/keiloktql/LifeHack2023-EcoCart/blob/main/promotion/poster-3.png)
+![](https://github.com/Sebastian-Chai/EcoCart//blob/main/promotion/poster-3.png)
