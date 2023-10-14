@@ -27,3 +27,13 @@ a:active {
   object-position: -444px -160px;
   height: 15px;
 }
+
+/* Overrides */
+.override-empty-btn {
+  border: 1px solid #d0d5dd;
+}
+
+.override-home {
+  background-image: url("/assets/img/bg-pattern.png");
+  background-position: center;
+}

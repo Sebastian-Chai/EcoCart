@@ -1,37 +1,32 @@
 /* eslint-disable tailwindcss/no-custom-classname */
 /* eslint-disable no-unused-vars */
 import Image from "next/image";
-import Link from "next/link";
 import React, { useState } from "react";
-import * as Yup from "yup";
-import { Form, Formik } from "formik";
 import MainLayout from "@/components/layout/MainLayout";
 import LogoRaw from "@/public/assets/svg/logo-raw.svg";
+import IconGoogle from "@/public/assets/svg/icon-google.svg";
 import Button from "@/components/shared/Button";
-import FormField from "@/components/shared/FormField";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import useAuth from "@/hooks/useAuth";
+import { BASE_URL } from "@/config/constants";
 
 const Login = () => {
-  const validationSchema = Yup.object().shape({
-    email: Yup.string().email("Invalid format.").required("Required field."),
-    password: Yup.string().required("Required field.")
-  });
   const router = useRouter();
   const supabaseClient = useSupabaseClient();
   const [loading, setLoading] = useState(false);
   const [smh, setSmh] = useState(false); // flag to trigger form shaking animation
-  const { auth, setAuth } = useAuth();
   const user = useUser();
 
-  const onSubmitFn = async ({ email, password }) => {
+  const onSubmitFn = async () => {
     setLoading(true);
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password
+    const { data, error } = await supabaseClient.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${BASE_URL}/dashboard`
+      }
     });
+    console.log(data);
     if (error) {
       setSmh(true);
       toast.error("An error has occured.");
@@ -42,7 +37,7 @@ const Login = () => {
   };
 
   return (
-    <MainLayout>
+    <MainLayout title="Login | EcoCart">
       <div className="smh-container w-full">
         <div
           className={`smh-card${
@@ -55,8 +50,18 @@ const Login = () => {
             Log In
           </h1>
           <p className="text-gray-600">Welcome back!</p>
-
-          <p className="mt-2 text-sm text-gray-600 text-center">
+          <hr className="h-px w-full mt-8 bg-gray-300 border-0" />
+          <Button
+            variation="EMPTY"
+            customClassName="mt-8 flex w-full items-center"
+            onClickFn={onSubmitFn}
+            loading={loading}
+            disabled={loading}
+          >
+            <Image className="mr-4" src={IconGoogle} width={20} alt="Google" />
+            Login with Google{" "}
+          </Button>
+          <p className="mt-8 text-sm text-gray-400 text-center">
             If you do not have an EcoCart account yet, it will automatically be
             created once you sign in.
           </p>
