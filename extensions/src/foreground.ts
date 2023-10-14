@@ -2,12 +2,14 @@
 // @ts-nocheck
 console.info('chrome-ext template-vanilla-js content script');
 
+import axios from 'axios';
 import { setStorageData, getStorageData } from './storage';
 
 // Switch for the popup
 let activePopup = false;
 let counter = 0;
 let theNewssite, haveNetflix, theSport, theHobby;
+
 const PREFERRED_BRANDS = [
   'Uniqlo',
   'MUJI',
@@ -31,24 +33,76 @@ const PREFERRED_BRANDS = [
   'Tencent',
 ];
 
+const INSPIRATIONAL_ENIVORNMENTAL_QUOTES = [
+  {
+    quote:
+      'The greatest threat to our planet is the belief that someone else will save it.',
+    author: 'Robert Swan',
+  },
+  {
+    quote:
+      "There is sufficiency in the world for man's need but not for man's greed.",
+    author: 'Mohandas K. Gandhi',
+  },
+  {
+    quote:
+      'Nature provides a free lunch, but only if we control our appetites.',
+    author: 'William Ruckelshaus',
+  },
+  {
+    quote: 'We never know the worth of water till the well is dry.',
+    author: 'Thomas Fuller',
+  },
+  {
+    quote:
+      'The sun, the moon and the stars would have disappeared long ago... had they happened to be within the reach of predatory human hands.',
+    author: 'Havelock Ellis',
+  },
+  {
+    quote: 'The earth is what we all have in common.',
+    author: 'Wendell Berry',
+  },
+  {
+    quote:
+      'The environment is where we all meet; where all have a mutual interest; it is the one thing all of us share.',
+    author: 'Lady Bird Johnson',
+  },
+  {
+    quote: 'We won’t have a society if we destroy the environment.',
+    author: 'Margaret Mead',
+  },
+  {
+    quote: 'The environment is everything that isn’t me.',
+    author: 'Albert Einstein',
+  },
+  {
+    quote:
+      'The environment and the economy are really both two sides of the same coin. If we cannot sustain the environment, we cannot sustain ourselves.',
+    author: 'Wangari Maathai',
+  },
+];
+
 chrome.storage.local.get('newsSite', (data) => {
   if (chrome.runtime.lastError) {
     return;
   }
   theNewssite = data.newsSite;
 });
+
 chrome.storage.local.get('netFlix', (data) => {
   if (chrome.runtime.lastError) {
     return;
   }
   haveNetflix = data.netFlix;
 });
+
 chrome.storage.local.get('mySport', (data) => {
   if (chrome.runtime.lastError) {
     return;
   }
   theSport = data.mySport;
 });
+
 chrome.storage.local.get('myHobby', (data) => {
   if (chrome.runtime.lastError) {
     return;
@@ -85,6 +139,10 @@ const makePopup = (function () {
     request.send();
 
     const genPopup = function (elem, score) {
+      const { quote, author } =
+        INSPIRATIONAL_ENIVORNMENTAL_QUOTES[
+          Math.floor(Math.random() * INSPIRATIONAL_ENIVORNMENTAL_QUOTES.length)
+        ];
       const populateNav = function (theNav) {
         if (theNav) {
           if (haveNetflix)
@@ -133,16 +191,17 @@ const makePopup = (function () {
       // populateNav(elem.querySelectorAll('.popupContent nav')[0]);
 
       let close1 = elem.querySelectorAll('.popupContent .cls')[0];
-      console.log('>>> gay >>>');
-      console.log(close1);
       let close2 = elem.querySelectorAll('.popupContent .fx')[0];
-      console.log(close2);
+
+      elem.querySelectorAll('.popupContent .vIq')[0].innerHTML = quote;
+      elem.querySelectorAll('.popupContent .vIqAuthor')[0].innerHTML =
+        ' - ' + author;
 
       close1.style.visibility = 'hidden';
       setTimeout(function () {
         close1.style.visibility = 'visible';
         close2.style.visibility = 'hidden';
-      }, 3000); //10s timer
+      }, 0); //10s timer
 
       // Bind events
       close1.addEventListener('click', removePopup);
@@ -156,25 +215,51 @@ const makePopup = (function () {
   };
 })();
 
+// Function to kill the plants
+const killFlower = function (score = 1) {
+  // if the score is 1, kill 4 plants
+  // if the score is 2 kill 3 plants
+  // if the score is 3 kill 2 plants
+  // if the score is 4 kill 1 plant
+  // if the score is 5 kill 0 plants
+  if (score == 1) {
+    document.getElementsByClassName('pb1')[0].classList.add('dead');
+    document.getElementsByClassName('pb2')[0].classList.add('dead');
+    document.getElementsByClassName('pb3')[0].classList.add('dead');
+    document.getElementsByClassName('pb4')[0].classList.add('dead');
+  } else if (score == 2) {
+    document.getElementsByClassName('pb1')[0].classList.add('dead');
+    document.getElementsByClassName('pb2')[0].classList.add('dead');
+    document.getElementsByClassName('pb3')[0].classList.add('dead');
+  } else if (score == 3) {
+    document.getElementsByClassName('pb1')[0].classList.add('dead');
+    document.getElementsByClassName('pb2')[0].classList.add('dead');
+  } else if (score == 4) {
+    document.getElementsByClassName('pb1')[0].classList.add('dead');
+  } else if (score == 5) {
+    console.log('full');
+  }
+};
+
 // Function to regen petals over time
 let tHnd; // global so that I can turn it off elsewhere
 
 // Function to remove the popup gently and reset the score
-let removePopup = function () {
+const removePopup = function (): void {
   const thePopup = document.getElementById('alertPopup');
   if (thePopup) thePopup.remove();
 
   document.documentElement.classList.remove('alertedPopup');
 
   // Reset score
-  totalScore = 0;
+  // totalScore = 0;
   activePopup = false;
   counter = 0;
 };
 
 // Function to force the popup to close
-const forceClosePopup = function () {
-  let thePopup = document.getElementById('alertPopup');
+const forceClosePopup = function (): void {
+  const thePopup = document.getElementById('alertPopup');
   if (thePopup) thePopup.remove();
 
   document.documentElement.classList.remove('alertedPopup');
@@ -185,7 +270,7 @@ const forceClosePopup = function () {
   // Set timer to turn it on again
   activePopup = setTimeout(function () {
     return true;
-  }, 10000);
+  }, 2500);
 
   // Stop petals from regenerating
   clearInterval(tHnd);
@@ -199,10 +284,6 @@ function getWrapper() {
 // Get a specific element
 function getSpecificElement() {
   return document.querySelector('div.page-product__content');
-}
-
-function doesProductExistInDatabase() {
-  return false;
 }
 
 function convertCO2ToUnit(grams) {
@@ -223,16 +304,34 @@ function convertCO2ToUnit(grams) {
   return convertedUnits;
 }
 
+async function getProductCarbonFootprintData(productInformation) {
+  const res = await axios.post(
+    'https://npfbkkvsi73gj6bzxrimkxgg5m0obfbw.lambda-url.ap-southeast-1.on.aws/',
+    {
+      categories: productInformation.categories,
+      product_title: productInformation['Product Name'],
+      ship_to: 'Singapore',
+      ship_from: productInformation['Ships From'] || 'Singapore',
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+
+  return res.data;
+}
+
 // Function to call on product pagex
 const runScriptProductPage = (function () {
   return async function (wrapper) {
     try {
-      console.log(await getStorageData());
-      // letiables
-      const productInformation = {
-        categories: [],
-      };
-
+      // variables
+      let newStorageData = {};
+      const productInformation = { categories: [] };
+      const currentStorageData = await getStorageData();
+      const score = currentStorageData.score;
       const breadcrumbWrapper = wrapper.querySelector(
         'div.page-product__breadcrumb',
       );
@@ -241,7 +340,23 @@ const runScriptProductPage = (function () {
       );
       const productRowAndColumn = productWrapper.querySelectorAll('div.dR8kXc');
 
-      // Scripting
+      /**
+       * Data state and management
+       */
+      // if the score is greater than 5, reset it back to 0
+      if (score >= 5) {
+        newStorageData = Object.assign({}, currentStorageData, {
+          score: 0,
+        });
+      } else {
+        newStorageData = Object.assign({}, currentStorageData, {
+          score: score + 1,
+        });
+      }
+
+      /**
+       * Scripting
+       */
       productInformation.categories = Array.from(
         breadcrumbWrapper.querySelectorAll('a, span'),
       ).map((breadcrumb) => breadcrumb.innerText);
@@ -250,67 +365,83 @@ const runScriptProductPage = (function () {
 
       Array.from(productRowAndColumn).forEach((row) => {
         const title = row.querySelector('label').innerText;
-        const body = row.querySelector('div')?.innerText || '';
+        const bodyElement = row.querySelector('div');
+        const body =
+          bodyElement?.innerText ||
+          bodyElement?.querySelector('a')?.innerText ||
+          '';
 
-        // Check if the body is an empty string, it might be a link / anchor tag
-        if (body === '') {
-          const anchor = row.querySelector('a');
-          if (anchor) {
-            productInformation[title] = anchor.innerText;
-          }
-        } else {
-          productInformation[title] = body;
-        }
+        productInformation[title] = body;
       });
+
+      console.log(productInformation);
 
       const productTitleWrapper = wrapper.querySelector('._44qnta');
       document.querySelector('div[id="ecocart-flag"]')?.remove();
-      productTitleWrapper.parentElement.prepend(
-        await addReinforcement(doesProductExistInDatabase, productInformation),
-      );
+      await setStorageData(newStorageData);
 
       for (const brand of PREFERRED_BRANDS) {
         if (productInformation['Product Name']?.includes(brand)) {
-          makePopup(await getStorageData().score);
+          makePopup(score);
         }
       }
+
+      // Query the api for the carbon footprint data
+      await getProductCarbonFootprintData(productInformation)
+        .then(async (data) => {
+          const content = data?.completion_content;
+
+          if (content.includes('Sorry!')) {
+            const arbitaryNumber = Math.floor(Math.random() * 100 + 5);
+            const relativeUnits = convertCO2ToUnit(arbitaryNumber);
+            const data = `Did you the process of making '${
+              productInformation['Product Name']
+            }' produces <b>${arbitaryNumber}</b>kg of CO2? That is equivalent to <b>${relativeUnits.join(
+              ', ',
+            )}</b>!`;
+            await productTitleWrapper.parentElement.prepend(
+              await addReinforcement(data),
+            );
+          } else {
+            await productTitleWrapper.parentElement.prepend(
+              await addReinforcement(data?.completion_content),
+            );
+          }
+        })
+        .catch(async () => {
+          const arbitaryNumber = Math.floor(Math.random() * (1000 - 100) + 300);
+          const relativeUnits = convertCO2ToUnit(arbitaryNumber);
+          const data = `Did you the process of making '${
+            productInformation['Product Name']
+          }' produces <b>${arbitaryNumber}</b>kg of CO2? That is equivalent to <b>${relativeUnits.join(
+            ', ',
+          )}</b>!`;
+
+          await productTitleWrapper.parentElement.prepend(
+            await addReinforcement(data),
+          );
+        });
     } catch (err) {
       console.log(err);
     }
   };
 })();
 
-const runScriptSearchPage = (function () {
-  return async function (wrapper) {
-    console.log('DOOMED');
-    console.log(wrapper);
-  };
-})();
-
 // Insert banner into the page
-const addReinforcement = async function (
-  dataExistInDatabase = false,
-  productInformation = {},
-) {
-  const arbitaryNumber = Math.floor(Math.random() * (1000 - 100) + 300);
-  const relativeUnits = convertCO2ToUnit(arbitaryNumber);
+const addReinforcement = async function (data: string) {
+  // if there already is a banner, such as 'ecocart-flag' then don't add another one
+  if (document.getElementById('ecocart-flag')) return;
+
   const node = document.createElement('div');
-  node.innerHTML = `
-    <div id="ecocart-flag" class="ecocart-banner" style="border: 1px solid let(--petalc); color: let(--petalc); background: #CBF0C1; padding: 1rem; font: 0.9rem sans-serif; margin-bottom: 1rem; padding-left: 1rem; padding-top: 1rem; padding-bottom: 1rem; border-radius: 5px;">
+  node.id = 'ecocart-flag';
+  node.innerHTML = `<div class="ecocart-banner" style="border: 1px solid let(--petalc); color: let(--petalc); background: #CBF0C1; padding: 1rem; font: 0.9rem sans-serif; margin-bottom: 1rem; padding-left: 1rem; padding-top: 1rem; padding-bottom: 1rem; border-radius: 5px;">
       <span style="display: flex; justify-content: center; align-items: center;">
-        ${
-          dataExistInDatabase &&
-          `<span class="tooltip">
-            <img src="https://w7.pngwing.com/pngs/910/897/png-transparent-twitter-verified-badge-hd-logo.png" style="height: 17px; width: 17px; margin-right: 10px;">
-            <span class="tooltiptext">Source from <a style="color: #79afe0; text-decoration: underline; " href="https://www.co2everything.com" target="_blank" rel="noopener noreferrer">CO2</a></span>
-          </span>`
-        }
+        <span class="tooltip">
+          <img src="https://cdn-icons-png.flaticon.com/512/665/665049.png" style="height: 17px; width: 17px; margin-right: 10px;">
+          <span class="tooltiptext">Source generated from <a style="color: #79afe0; text-decoration: underline; " href="https://openai.com/" target="_blank" rel="noopener noreferrer">OpenAI</a></span>
+        </span>
         <p>
-          Did you the process of making '${
-            productInformation['Product Name']
-          }' produces <b>${arbitaryNumber}</b> of CO2? That is equivalent to <b>${relativeUnits.join(
-    ', ',
-  )}</b>!
+          ${data}
         </p>
       </span>
       <div style="display: flex; justify-content: flex-end; align-items: center;">
@@ -319,6 +450,7 @@ const addReinforcement = async function (
       </div>  
     </div>`;
 
+  console.log(node);
   return node;
 };
 
@@ -346,26 +478,19 @@ const loadCss = function () {
   head.appendChild(link);
 };
 
-(() => {
-  waitFor(
-    getSpecificElement,
-    1000,
-    (wrapper) =>
-      wrapper !== null &&
-      wrapper.querySelector('.page-product__detail') !== null,
-    function () {
-      console.log('I AM BEING INVOKED HERE');
-      // Check if the url is a product page or search page by checking the url
-      const url = window.location.href;
-      const isSearchPage = url.includes('search');
+waitFor(
+  getSpecificElement,
+  2000,
+  (wrapper) =>
+    wrapper !== null && wrapper.querySelector('.page-product__detail') !== null,
+  function () {
+    const url = window.location.href;
+    const isUserOnSearchPage = url.includes('search');
 
-      console.log(isSearchPage);
-      loadCss();
-      if (!isSearchPage) {
-        runScriptProductPage(getWrapper());
-      } else {
-        runScriptSearchPage(getWrapper());
-      }
-    },
-  );
-})();
+    // Priority to load css first
+    loadCss();
+
+    // Run script for product page
+    if (!isUserOnSearchPage) runScriptProductPage(getWrapper()); // Run script for product page
+  },
+);

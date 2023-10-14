@@ -2,6 +2,7 @@
 // @ts-nocheck
 import { createClient, User } from '@supabase/supabase-js';
 import { getCurrentUser, supabase } from './popup';
+import axios from 'axios';
 
 (() => {
   function getWrapper(): Element | null {
@@ -19,6 +20,33 @@ import { getCurrentUser, supabase } from './popup';
   }
 
   const overrideCheckoutButton = async function (wrapper): Promise<void> {
+    console.log('running overrideCheckoutButton');
+    const allProductTitles = document.querySelectorAll('.LAQKxn');
+    const productsArr = [];
+    for (const productTitle of allProductTitles) {
+      const productTitleAnchor = productTitle.querySelector('a');
+      const productTitleRaw = productTitleAnchor.getAttribute('title');
+      productsArr.push(productTitleRaw);
+    }
+
+    let response = null;
+    try {
+      response = await axios.post(
+        'https://udl4feeh2rzckgxuhxlecj3bba0wsoqx.lambda-url.ap-southeast-1.on.aws/',
+        {
+          product_titles: productsArr,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+
     const checkoutFooter = wrapper.querySelector('.rnocow > div.c2pfrq');
     // Create a div
     const node = document.createElement('button');
@@ -34,9 +62,12 @@ import { getCurrentUser, supabase } from './popup';
     const node2 = document.createElement('div');
     node2.id = 'ecocart-text';
     // total co2 emission for the cart
-    const arbitaryNumber = Math.floor(Math.random() * (1000 - 100) + 1000);
-    node2.innerHTML = `<p style="padding-left: .5rem;">Estimated CO2 emission: ${arbitaryNumber}g</p>`;
-
+    const arbitaryNumber = Math.floor(Math.random() * (100 - 10) + 100);
+    node2.innerHTML = `<p style="padding-left: .5rem;">Estimated CO2 emission: ${
+      response
+        ? response?.data?.co2_footprint
+        : arbitaryNumber * allProductTitles.length
+    } kg</p>`;
     // Insert the button before the checkout button if there are no existing buttons with the same id
     if (checkoutFooter.querySelector('#ecocart-button') === null) {
       // Insert it before the last child
@@ -50,13 +81,14 @@ import { getCurrentUser, supabase } from './popup';
         node.style.opacity = 0.5;
         node.innerText = 'Processing...';
         node.disabled = true;
-        const arbitaryNumber = Math.floor(Math.random() * (1000 - 100) + 100);
         getCurrentUser().then(async (resp) => {
           if (resp) {
             console.log('user found and inserting to transaction db...');
             const { error } = await supabase.from('transactions').insert({
               user_uuid: resp.user.id,
-              co_emission: arbitaryNumber,
+              co_emission: response
+                ? response.data.co2_footprint
+                : arbitaryNumber * allProductTitles.length,
               merchant: 'Shopee',
               transaction_link: 'https://shopee.sg/cart',
             });
