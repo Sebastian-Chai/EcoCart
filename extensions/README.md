@@ -193,3 +193,4 @@ Read more about service workers [here](https://developer.chrome.com/docs/extensi
 - [webpack documentation](https://webpack.js.org/concepts/)
 - [The TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
 - [Sass Basics](https://sass-lang.com/guide)
+

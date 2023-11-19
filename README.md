@@ -154,3 +154,4 @@ Project Link: [https://github.com/Sebastian-Chai/EcoCart/](https://github.com/Se
 ![](https://github.com/Sebastian-Chai/EcoCart//blob/main/promotion/poster-2.png)
 
 ![](https://github.com/Sebastian-Chai/EcoCart//blob/main/promotion/poster-3.png)
+
